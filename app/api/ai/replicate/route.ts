@@ -48,7 +48,7 @@ export async function POST(req: NextRequestWithImage) {
 
     while (true) {
         console.log('Pooling imagem from replicate...')
-        await new Promise(resolve => setTimeout(resolve, 3000))
+        await new Promise(resolve => setTimeout(resolve, 10000))
 
         const finishResponse = await fetch(endPointFinishUrl, { headers });
 

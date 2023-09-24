@@ -1,17 +1,20 @@
 "use client";
 
 import Image from "next/image";
-
 import { cn } from "@/lib/utils";
 import {
     ContextMenu,
     ContextMenuContent,
     ContextMenuItem,
-    ContextMenuSub,
     ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { RestoredImage } from "@/types";
-import { downloadImageUrl, openImageUrl } from "@/util/downloadAndOpenImage";
+import { getPathImage } from "@/util/constants";
+import { useAuthProvider } from "@/providers/AuthProvider";
+import { useRouter } from "next/navigation";
+import { deleteImageSupabase } from "@/lib/supabase/crud";
+import { downloadImageUrl } from "@/util/downloadImage";
+import { openImageUrl } from "@/util/openImage";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     image: RestoredImage;
@@ -28,19 +31,24 @@ export function ListImages({
     className,
     ...props
 }: Props) {
-    async function handleDownloadImage(image: string) {
-        const urlFull = `${url}/${image}`;
+    const { user } = useAuthProvider();
+    const router = useRouter();
 
-        downloadImageUrl(urlFull, image);
-        // const supabase = createClientComponentClient();
-        // const { data, error } = await supabase.storage
-        //     .from(folder)
-        //     .download(url);
-    }
+    async function handleDeleteImage(image: string) {
+        try {
+            if (!user) {
+                throw new Error("Nenhum usuário logado");
+            }
 
-    async function handleOpenImage(image: string) {
-        const urlFull = `${url}/${image}`;
-        openImageUrl(urlFull);
+            const imageProcessing = getPathImage(user.id, "Processing", image);
+            const imageRestored = getPathImage(user.id, "Restored", image);
+
+            deleteImageSupabase([imageRestored, imageProcessing]);
+
+            router.refresh();
+        } catch (error: any) {
+            alert(`Erro ao deletar imagem: ${error.message}`);
+        }
     }
 
     return (
@@ -48,7 +56,7 @@ export function ListImages({
             <ContextMenu>
                 <ContextMenuTrigger>
                     <Image
-                        src={`${url}/${image.name}`}
+                        src={url}
                         alt={image.name}
                         width={width}
                         height={height}
@@ -60,39 +68,28 @@ export function ListImages({
                 <ContextMenuContent className="w-40">
                     <ContextMenuItem
                         onClick={() => {
-                            handleOpenImage(image.name);
+                            openImageUrl(url);
                         }}
                     >
                         Abrir Imagem
                     </ContextMenuItem>
-                    <ContextMenuSub>
-                        {/* <ContextMenuSubTrigger>
-                            Adicionar a Coleção
-                        </ContextMenuSubTrigger>
-                        <ContextMenuSubContent className="w-48">
-                            <ContextMenuItem>
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Nova coleção
-                            </ContextMenuItem>
-                            <ContextMenuSeparator />
-                           
-                        </ContextMenuSubContent> */}
-                    </ContextMenuSub>
+                    <ContextMenuItem
+                        onClick={() => {
+                            handleDeleteImage(image.name);
+                        }}
+                    >
+                        Excluir Imagem
+                    </ContextMenuItem>
 
                     <ContextMenuItem
                         onClick={() => {
-                            handleDownloadImage(image.name);
+                            downloadImageUrl(url, image.name);
                         }}
                     >
                         Download
                     </ContextMenuItem>
-                    {/* <ContextMenuSeparator /> */}
-                    {/* <ContextMenuItem>Copiar Link</ContextMenuItem> */}
                 </ContextMenuContent>
             </ContextMenu>
-            <div className="space-y-1 text-sm">
-                {/* <h3 className="font-medium leading-none">{image.name}</h3> */}
-            </div>
         </div>
     );
 }

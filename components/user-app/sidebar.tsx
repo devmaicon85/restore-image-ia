@@ -1,15 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-    BedIcon,
-    FanIcon,
-    ListMusic,
-    ListStart,
-    PlayCircle,
-    Radio,
-    SoupIcon,
-} from "lucide-react";
+import { FanIcon, ListMusic, ListStart, PlayCircle, Radio } from "lucide-react";
 import { FileIcon } from "@radix-ui/react-icons";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {

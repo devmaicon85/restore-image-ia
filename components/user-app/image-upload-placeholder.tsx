@@ -1,78 +1,67 @@
 "use client";
 
 import { useDropzone } from "react-dropzone";
-import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { Input } from "@/components/ui/input";
-import { Folder, PlusCircle, Radio, Save } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Radio } from "lucide-react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-import { uuid } from "uuidv4";
+import { v4 as uuid } from "uuid";
 import { useRouter } from "next/navigation";
-import {
-    FOLDER_IMAGES,
-    FOLDER_PROCESSING,
-    FOLDER_RESTORED,
-} from "@/util/constants";
 import { Skeleton } from "../ui/skeleton";
+import { useAuthProvider } from "@/providers/AuthProvider";
+import {
+    deleteImageSupabase,
+    getImageSupabase,
+    uploadImageSupabase,
+} from "@/lib/supabase/crud";
+import { FileToProcess } from "@/types";
+import { getBlobFromImageUrl } from "@/util/getBlobFromImageUrl";
+import { getPathImage } from "@/util/constants";
 
-interface FilePreview {
+export interface FilePreview {
     file: Blob;
     preview: string;
 }
 
-interface FileToProcess {
-    path: string;
-}
-
 export function ImageUploadPlaceholder() {
-    const [nameImage, setNameImage] = useState(`${uuid()}.png`);
+    const [nameImage, setNameImage] = useState("");
+    const { user } = useAuthProvider();
+
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
 
     const [file, setFile] = useState<FilePreview | null>();
-    const [restoredFile, setRestoredFile] = useState<FilePreview | null>();
 
     const [restoring, setRestoring] = useState(false);
     const [importing, setImporting] = useState(false);
 
-    const onDrop = useCallback(async (accessFiles: File[]) => {
+    async function onDrop(accessFiles: File[]) {
+        if (!user) {
+            alert("Nenhum usuário logado");
+            return;
+        }
+
         try {
             setImporting(true);
             const file = accessFiles[0];
-
             const preview = URL.createObjectURL(file);
-
             setFile({ file, preview });
 
-            const supabase = createClientComponentClient();
+            const path = getPathImage(user.id, "Processing", nameImage);
 
-            const { data, error } = await supabase.storage
-                .from(FOLDER_IMAGES)
-                .upload(`${FOLDER_PROCESSING}/${nameImage}`, file);
+            const { data } = await uploadImageSupabase(path, file);
 
-            if (!error) {
-                restauredImage(data);
-                console.log("🚀 ~ onDrop ~ 65:", data);
-            } else {
-                alert(error.message);
-            }
-        } catch (error) {
+            restauredImage(data);
+        } catch (error: any) {
+            alert(`Erro ao restaurar ${error.message}:${error.name}`);
             console.log("🚀~ onDrop ~ 70:", error);
+            reset();
         } finally {
             setImporting(false);
         }
-    }, []);
+    }
 
     const { getInputProps, getRootProps, isDragActive } = useDropzone({
         onDrop: onDrop,
@@ -84,33 +73,34 @@ export function ImageUploadPlaceholder() {
     });
 
     useEffect(() => {
+        reset();
         setIsMounted(true);
         return () => {
             if (file) URL.revokeObjectURL(file.preview);
-            if (restoredFile) URL.revokeObjectURL(restoredFile.preview);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     async function reset() {
         setFile(null);
-        setRestoredFile(null);
+        setRestoring(false);
+        setImporting(false);
         setNameImage(`${uuid()}.png`);
         router.refresh();
     }
     async function restauredImage(file: FileToProcess) {
-        if (!file) {
-            alert("Nenhum arquivo selecionado");
-            return;
+        if (!user) {
+            throw new Error("Nenhum usuário logado");
         }
+
         try {
+            if (!file) {
+                throw new Error("Arquivo não encontrado");
+            }
+
             setRestoring(true);
-            const supabase = createClientComponentClient();
-            const {
-                data: { publicUrl },
-            } = supabase.storage
-                .from(FOLDER_IMAGES)
-                .getPublicUrl(`${file?.path}`);
+
+            const { publicUrl } = await getImageSupabase(file);
 
             const res = await fetch("/api/ai/replicate", {
                 method: "POST",
@@ -121,33 +111,26 @@ export function ImageUploadPlaceholder() {
             });
 
             const restoredImageUrl = await res.json();
-            const readImageRes = await fetch(restoredImageUrl.data);
-            const imageBlob = await readImageRes.blob();
-            setRestoredFile({
-                file: imageBlob,
-                preview: URL.createObjectURL(imageBlob),
-            });
 
-            const { data, error } = await supabase.storage
-                .from(FOLDER_IMAGES)
-                .upload(`${FOLDER_RESTORED}/${nameImage}`, imageBlob);
-
-            if (error) {
-                
-                setRestoredFile(null);
-                alert("Erro ao restaurar a foto");
+            if (restoredImageUrl.error) {
+                throw new Error(restoredImageUrl.error);
             }
-        } catch (error) {
-            setFile(null);
-            setRestoredFile(null);
-            console.log(
-                "🚀 ~ file: image-upload-placeholder.tsx:92 ~ handleSend ~ error:",
-                error
-            );
-        } finally {
-            setRestoring(false);
-            reset();
+            const blob = await getBlobFromImageUrl(restoredImageUrl.data);
+            if (!blob) {
+                throw new Error("Arquivo Blob não foi montado");
+            }
 
+            const path = getPathImage(user.id, "Restored", nameImage);
+
+            await uploadImageSupabase(path, blob);
+        } catch (error: any) {
+            alert(`Erro ao restaurar ${error.message}:${error.name}`);
+
+            // exclui a imagem original caso a restauração falhe.
+            const path = getPathImage(user.id, "Processing", nameImage);
+            deleteImageSupabase([path]);
+        } finally {
+            reset();
         }
     }
 
@@ -155,16 +138,16 @@ export function ImageUploadPlaceholder() {
 
     return (
         <div className="flex  w-full shrink-0 items-center justify-center rounded-md ">
-            <div className="mx-auto flex  flex-col items-center justify-center text-center">
+            <div className="mx-auto flex]  flex-col items-center justify-center text-center">
                 {!file && (
-                    <div {...getRootProps()}>
+                    <div {...getRootProps()} className="w-96">
                         <Input {...getInputProps()} />
                         {isDragActive ? (
-                            <p className="flex items-center justify-center  opacity-70 border-2 cursor-pointer border-dashed p-6 h-36 rounded-md">
+                            <p className="flex items-center justify-center  opacity-70 border-2 cursor-pointer border-dashed hover:border-blue-500 p-6 h-36 rounded-md">
                                 Solte a imagem para importar
                             </p>
                         ) : (
-                            <div className="flex justify-center flex-col border-2 p-6 rounded-lg border-dashed cursor-pointer  opacity-70">
+                            <div className="flex justify-center flex-col border-2 p-6 rounded-lg border-dashed hover:border-blue-500 cursor-pointer  opacity-70">
                                 <Radio className="h-12 w-12 mx-auto" />
 
                                 <h3 className="mt-4 text-lg font-semibold">

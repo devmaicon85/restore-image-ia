@@ -10,3 +10,9 @@ interface FileObject {
 }
 
 export type RestoredImage = FileObject
+
+
+export interface FileToProcess {
+    path: string;
+}
+

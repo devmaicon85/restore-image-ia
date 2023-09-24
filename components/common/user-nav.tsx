@@ -29,7 +29,6 @@ export function UserNav() {
 
     const router = useRouter();
 
-    console.log('----')
     const getUser = async () => {
         const { data, error } = await supabase.auth.getUser();
 
