@@ -1,47 +1,51 @@
-import {
-    Session,
-    createServerComponentClient,
-} from "@supabase/auth-helpers-nextjs";
 import { RedirectType, redirect } from "next/navigation";
 
-import { cookies } from "next/headers";
 import UserAppHeader from "@/components/user-app/header";
 import { SideBar } from "@/components/user-app/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { ImageUploadPlaceholder } from "@/components/user-app/image-upload-placeholder";
 import { ListImages } from "@/components/user-app/list-images";
-import {
-    BUCKET_IMAGE_URL,
-    FOLDER_IMAGES,
-    getPathImage,
-} from "@/util/constants";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { listAllStorageServer } from "@/lib/supabase/storage/listAllStorageServer";
+import { getSessionAuthServer } from "@/lib/supabase/auth/getSessionAuthServer";
+import { getPathFileStorage } from "@/util/getPathFileStorage";
 interface Props {
     params: { userId: string };
 }
 export default async function UserApp({ params }: Props) {
-    const supabase = createServerComponentClient({ cookies });
-
-    const { data, error: sessionError } = await supabase.auth.getSession();
-    const session = data.session;
+    const {
+        data: { session },
+        error: sessionError,
+    } = await getSessionAuthServer();
 
     if (!session || sessionError) {
         redirect("/", RedirectType.replace);
     }
 
-    const { data: restoredImages, error } = await supabase.storage
-        .from(FOLDER_IMAGES)
-        .list(getPathImage(session.user.id, "Processing"), {
-            limit: 10,
-            offset: 0,
-            sortBy: { column: "created_at", order: "desc" },
-        });
+    const { data: restoredImages, error: errorProcessing } =
+        await listAllStorageServer(
+            getPathFileStorage({
+                userId: session.user.id,
+                pathImagem: "Processing",
+            })
+        );
 
-    if (error) {
-        alert("erro ao listar imagens");
+    const { data: processingImages, error: errorRestored } =
+        await listAllStorageServer(
+            getPathFileStorage({
+                userId: session.user.id,
+                pathImagem: "Processing",
+            })
+        );
+
+    if (errorProcessing) {
+        alert("erro ao listar imagens processadas");
     }
 
+    if (errorRestored) {
+        alert("erro ao listar imagens restauradas");
+    }
     return (
         <AuthProvider>
             <UserAppHeader />
@@ -94,11 +98,19 @@ export default async function UserApp({ params }: Props) {
                                                             image={image}
                                                             width={250}
                                                             height={250}
-                                                            url={`${BUCKET_IMAGE_URL}/${getPathImage(
-                                                                session.user.id,
-                                                                "Restored",
-                                                                image.name
-                                                            )}`}
+                                                            url={getPathFileStorage(
+                                                                {
+                                                                    userId: session
+                                                                        .user
+                                                                        .id,
+                                                                    pathImagem:
+                                                                        "Restored",
+                                                                    imageName:
+                                                                        image.name,
+                                                                    storageFullUrl:
+                                                                        true,
+                                                                }
+                                                            )}
                                                         />
                                                     )
                                                 )}
@@ -124,17 +136,19 @@ export default async function UserApp({ params }: Props) {
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 m-10">
-                                            {restoredImages?.map((image) => (
+                                            {processingImages?.map((image) => (
                                                 <ListImages
                                                     key={image.id}
                                                     image={image}
                                                     width={250}
                                                     height={250}
-                                                    url={`${BUCKET_IMAGE_URL}/${getPathImage(
-                                                        session.user.id,
-                                                        "Processing",
-                                                        image.name
-                                                    )}`}
+                                                    url={`${getPathFileStorage({
+                                                        userId: session.user.id,
+                                                        pathImagem:
+                                                            "Processing",
+                                                        imageName: image.name,
+                                                        storageFullUrl: true,
+                                                    })}`}
                                                 />
                                             ))}
                                         </div>

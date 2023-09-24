@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     try {
         if (code) {
             const supabase = createRouteHandlerClient({ cookies })
-            const data = await supabase.auth.exchangeCodeForSession(code);
+            await supabase.auth.exchangeCodeForSession(code);
         }
 
     } catch (error) {

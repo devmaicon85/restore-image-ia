@@ -1,10 +1,4 @@
-import {
-    Session,
-    createServerComponentClient,
-} from "@supabase/auth-helpers-nextjs";
-import { RedirectType, redirect } from "next/navigation";
-import { cookies } from "next/headers";
-
+import { redirect } from "next/navigation";
 import {
     Card,
     CardContent,
@@ -15,14 +9,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateAccountForm } from "@/components/auth/create-account-form";
 import { LoginAccountForm } from "@/components/auth/login-account-form";
+import { getSessionAuthServer } from "@/lib/supabase/auth/getSessionAuthServer";
 
 export default async function Home() {
-    const supabase = createServerComponentClient({ cookies });
-    const { data } = await supabase.auth.getSession();
+    const { data, error } = await getSessionAuthServer();
 
     const session = data.session;
     if (session?.user.id) {
-        redirect(`/user-app/${session.user.id}`);
+        redirect(`/user-app`);
     }
 
     return (

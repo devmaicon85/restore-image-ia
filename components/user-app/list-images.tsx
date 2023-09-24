@@ -9,12 +9,12 @@ import {
     ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { RestoredImage } from "@/types";
-import { getPathImage } from "@/util/constants";
 import { useAuthProvider } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
-import { deleteImageSupabase } from "@/lib/supabase/crud";
 import { downloadImageUrl } from "@/util/downloadImage";
 import { openImageUrl } from "@/util/openImage";
+import { deleteFilesStorageClient } from "@/lib/supabase/storage/deleteFilesStoreClient";
+import { getPathFileStorage } from "@/util/getPathFileStorage";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     image: RestoredImage;
@@ -40,10 +40,19 @@ export function ListImages({
                 throw new Error("Nenhum usuário logado");
             }
 
-            const imageProcessing = getPathImage(user.id, "Processing", image);
-            const imageRestored = getPathImage(user.id, "Restored", image);
+            const imageProcessing = getPathFileStorage({
+                userId: user.id,
+                pathImagem: "Processing",
+                imageName: image,
+            });
 
-            deleteImageSupabase([imageRestored, imageProcessing]);
+            const imageRestored = getPathFileStorage({
+                userId: user.id,
+                pathImagem: "Restored",
+                imageName: image,
+            });
+
+            deleteFilesStorageClient([imageRestored, imageProcessing]);
 
             router.refresh();
         } catch (error: any) {

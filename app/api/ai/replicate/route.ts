@@ -41,6 +41,14 @@ export async function POST(req: NextRequestWithImage) {
             }
         }),
     })
+    console.log("🚀 ~ file: route.ts:44 ~ POST ~ startRestoreResponse:", startRestoreResponse)
+
+    if (!startRestoreResponse.ok) {
+
+        return NextResponse.json({
+            error: startRestoreResponse.statusText
+        }, { status: 401 })
+    }
 
 
     const endPointFinishUrl = (await startRestoreResponse.json()).urls.get;
@@ -53,6 +61,7 @@ export async function POST(req: NextRequestWithImage) {
         const finishResponse = await fetch(endPointFinishUrl, { headers });
 
         const response = await finishResponse.json();
+        console.log("🚀 ~ file: route.ts:64 ~ POST ~ response:", response)
 
         if (response.status === 'succeeded') {
             const restoredImage = response.output;

@@ -11,14 +11,13 @@ import { v4 as uuid } from "uuid";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "../ui/skeleton";
 import { useAuthProvider } from "@/providers/AuthProvider";
-import {
-    deleteImageSupabase,
-    getImageSupabase,
-    uploadImageSupabase,
-} from "@/lib/supabase/crud";
+
 import { FileToProcess } from "@/types";
 import { getBlobFromImageUrl } from "@/util/getBlobFromImageUrl";
-import { getPathImage } from "@/util/constants";
+import { uploadFileStorageClient } from "@/lib/supabase/storage/uploadFileStorageClient";
+import { getFileStorageClient } from "@/lib/supabase/storage/getFileStorageClient";
+import { deleteFilesStorageClient } from "@/lib/supabase/storage/deleteFilesStoreClient";
+import { getPathFileStorage } from "@/util/getPathFileStorage";
 
 export interface FilePreview {
     file: Blob;
@@ -49,9 +48,14 @@ export function ImageUploadPlaceholder() {
             const preview = URL.createObjectURL(file);
             setFile({ file, preview });
 
-            const path = getPathImage(user.id, "Processing", nameImage);
+            const path = getPathFileStorage({
+                userId: user.id,
+                pathImagem: "Processing",
+                imageName: nameImage,
+            });
+            // const path = getPathImage(user.id, "Processing", nameImage);
 
-            const { data } = await uploadImageSupabase(path, file);
+            const { data } = await uploadFileStorageClient(path, file);
 
             restauredImage(data);
         } catch (error: any) {
@@ -100,7 +104,7 @@ export function ImageUploadPlaceholder() {
 
             setRestoring(true);
 
-            const { publicUrl } = await getImageSupabase(file);
+            const { publicUrl } = await getFileStorageClient(file);
 
             const res = await fetch("/api/ai/replicate", {
                 method: "POST",
@@ -120,15 +124,25 @@ export function ImageUploadPlaceholder() {
                 throw new Error("Arquivo Blob não foi montado");
             }
 
-            const path = getPathImage(user.id, "Restored", nameImage);
+            // const path = getPathImage(user.id, "Restored", nameImage);
+            const path = getPathFileStorage({
+                userId: user.id,
+                pathImagem: "Restored",
+                imageName: nameImage,
+            });
 
-            await uploadImageSupabase(path, blob);
+            await uploadFileStorageClient(path, blob);
         } catch (error: any) {
-            alert(`Erro ao restaurar ${error.message}:${error.name}`);
+            alert(`Erro ao restaurar ${error.message}`);
 
             // exclui a imagem original caso a restauração falhe.
-            const path = getPathImage(user.id, "Processing", nameImage);
-            deleteImageSupabase([path]);
+            // const path = getPathImage(user.id, "Processing", nameImage);
+            const path = getPathFileStorage({
+                userId: user.id,
+                pathImagem: "Processing",
+                imageName: nameImage,
+            });
+            deleteFilesStorageClient([path]);
         } finally {
             reset();
         }
