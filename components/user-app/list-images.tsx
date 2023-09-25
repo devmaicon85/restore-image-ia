@@ -9,7 +9,7 @@ import {
     ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { RestoredImage } from "@/types";
-import { useAuthProvider } from "@/providers/AuthProvider";
+import { useAuthProvider } from "@/components/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { downloadImageUrl } from "@/util/downloadImage";
 import { openImageUrl } from "@/util/openImage";

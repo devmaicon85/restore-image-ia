@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateAccountForm } from "@/components/auth/create-account-form";
 import { LoginAccountForm } from "@/components/auth/login-account-form";
 import { getSessionAuthServer } from "@/lib/supabase/auth/getSessionAuthServer";
+import { Logo } from "@/components/app/logo";
 
 export default async function Home() {
     const { data, error } = await getSessionAuthServer();
@@ -20,7 +21,8 @@ export default async function Home() {
     }
 
     return (
-        <div className="flex flex-col h-screen w-full justify-center items-center">
+        <div className="flex space-y-10 flex-col h-screen w-full justify-center items-center">
+            <Logo/>
             <Tabs defaultValue="create-account" className="w-[400px]">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger

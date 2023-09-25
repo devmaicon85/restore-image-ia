@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Essa aplicação foi desenvolvida através do "Projeto Next js 13 Completo com IA Supabase Shadcn-ui"
+Link do video no Youtube: https://www.youtube.com/watch?v=KHKpKR1NuaU&t=2s&ab_channel=DeveloperDeck101
 
-## Getting Started
 
-First, run the development server:
+// instalar todas as dependencias
+pnpm i
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+//renomear env.example para .env e substituir pelas suas credenciais do supabase e replicate 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ (https://supabase.com/)
+(https://replicate.com/)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+MELHORIAS QUE REALIZEI NO PROJETO
 
-## Learn More
+Separei a aplicação e as imagens por usuário logado, tornando assim a aplicação multi tenancy.
+Crei uma pasta por usuário no logado no supabase com políticas de permissão apenas para a pasta do usuário logado.
+Nova listagem das imagens originais enviadas pelo usuário.
+Nova opção de abrir imagem com o botão direito
+Nova opção de excluir imagem com o botão direito
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Funções uteis separadas na pasta Utils
+	downloadImage.ts
+	openImage.ts
+	getBlobFromImage.ts //pra buscar o blob de uma imagem sem usar o supabase
+	getPathFileStorage.ts // pra buscar o diretorio no storage
+	constants.ts // pra simplificar o uso das env.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+Funcionalidades do supabase separadas
+	Storage:
+		deleteFileStoreClient.ts
+		getFileStorageClient.ts
+		listAllStorageServer.ts
+		uploadFileStorageClient.ts
+    Auth:
+        getSessionAuthServer.ts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Criação do AuthProvider para acesso ao codigo do usuario em toda a aplicação 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

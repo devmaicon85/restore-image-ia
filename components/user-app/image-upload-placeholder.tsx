@@ -10,7 +10,7 @@ import Image from "next/image";
 import { v4 as uuid } from "uuid";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "../ui/skeleton";
-import { useAuthProvider } from "@/providers/AuthProvider";
+import { useAuthProvider } from "@/components/providers/AuthProvider";
 
 import { FileToProcess } from "@/types";
 import { getBlobFromImageUrl } from "@/util/getBlobFromImageUrl";
