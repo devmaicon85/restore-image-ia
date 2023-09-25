@@ -1,6 +1,9 @@
 # Aplicação Next.js com IA Supabase Shadcn-ui
 
-Esta aplicação foi desenvolvida com base no projeto "Projeto Next.js 13 Completo com IA Supabase Shadcn-ui". O objetivo deste projeto é criar uma aplicação multi tenancy utilizando Next.js, Supabase e Shadcn-ui. O vídeo completo do projeto pode ser encontrado [aqui](https://www.youtube.com/watch?v=KHKpKR1NuaU&t=2s&ab_channel=DeveloperDeck101).
+Esta aplicação foi desenvolvida com base no projeto "Projeto Next.js 13 Completo com IA Supabase Shadcn-ui". 
+O objetivo deste projeto é criar uma aplicação para a restauração de fotos antigas utilizando IA
+
+O vídeo completo do projeto pode ser encontrado [aqui](https://www.youtube.com/watch?v=KHKpKR1NuaU&t=2s&ab_channel=DeveloperDeck101).
 
 ## Instalação
 
@@ -21,7 +24,7 @@ pnpm i
 
 A seguir estão as melhorias realizadas no projeto original:
 
-- Separação da aplicação e das imagens por usuário logado, tornando a aplicação multi tenancy.
+- Separação da aplicação e das imagens por usuário logado, tornando assim a aplicação multi tenancy.
 - Criação de uma pasta para cada usuário logado no Supabase, com políticas de permissão aplicadas apenas à pasta do usuário logado.
 - Nova listagem das imagens originais enviadas pelo usuário.
 - Nova opção de abrir imagem com o botão direito.
@@ -54,16 +57,8 @@ Foi criado um `AuthProvider` para permitir o acesso ao código do usuário em to
 
 ### Tema Dark / Light / System
 
-A aplicação possui suporte para os temas Dark, Light e System.
+Foi adicionado suporte para os temas Dark, Light e System.
 
 ### Logo Diferente
 
 Foi adicionada uma logo personalizada à aplicação.
-
-## Contribuindo
-
-Se você deseja contribuir com este projeto, sinta-se à vontade para abrir uma *issue* ou enviar um *pull request*.
-
-## Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
