@@ -20,17 +20,26 @@ pnpm i
 - [Supabase](https://supabase.com/)
 - [Replicate](https://replicate.com/)
 
-## Melhorias Realizadas
+3. No supabase > store crie um bucket chamado `images` e crie policies de insert, select, update e delete com a seguinte police
+   `((bucket_id = 'images'::text) AND ((auth.uid())::text = (storage.foldername(name))[1]))`
+   _isso vai permitir que o usuário logado consiga apenas criar imagens dentro da pasta com seu id._
+
+# Melhorias Realizadas
 
 A seguir estão as melhorias realizadas no projeto original:
 
 - Separação da aplicação e das imagens por usuário logado, tornando assim a aplicação multi tenancy.
 - Criação de uma pasta para cada usuário logado no Supabase, com políticas de permissão aplicadas apenas à pasta do usuário logado.
+- Polling imagem from replicate do lado do servidor não funcionava na vercel quando a resposta demorava mais de 10 segundos; O while agora ocorre do lado do cliente corrigindo esse problema.
+
+
+## Outras melhorias
 - Nova listagem das imagens originais enviadas pelo usuário.
 - Nova opção de abrir imagem com o botão direito.
 - Nova opção de excluir imagem com o botão direito.
 
-### Funções Modificadas e Separadas na Pasta Utils
+
+## Funções Modificadas e Separadas na Pasta Utils
 
 - `downloadImage.ts`
 - `openImage.ts`
@@ -38,7 +47,7 @@ A seguir estão as melhorias realizadas no projeto original:
 - `getPathFileStorage.ts` - busca o diretório no *storage*.
 - `constants.ts` - simplifica o uso das variáveis de ambiente.
 
-### Funcionalidades do Supabase Separadas
+## Funções do Supabase Separadas em arquivos
 
 #### Storage
 
@@ -51,14 +60,14 @@ A seguir estão as melhorias realizadas no projeto original:
 
 - `getSessionAuthServer.ts`
 
-### Criação do AuthProvider
+## Criação do AuthProvider
 
-Foi criado um `AuthProvider` para permitir o acesso ao código do usuário em toda a aplicação.
+Criado um provider `AuthProvider` para persistir o acesso ao código do usuário em toda a aplicação.
 
-### Tema Dark / Light / System
+## Tema Dark / Light / System
 
 Foi adicionado suporte para os temas Dark, Light e System.
 
-### Logo Diferente
+## Logo Diferente
 
 Foi adicionada uma logo personalizada à aplicação.
