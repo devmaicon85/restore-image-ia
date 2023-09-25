@@ -60,8 +60,7 @@ export function ImageUploadPlaceholder() {
             restauredImage(data);
         } catch (error: any) {
             alert(`Erro ao restaurar ${error.message}:${error.name}`);
-            console.log("🚀~ onDrop ~ 70:", error);
-            reset();
+            // reset();
         } finally {
             setImporting(false);
         }
@@ -106,7 +105,7 @@ export function ImageUploadPlaceholder() {
 
             const { publicUrl } = await getFileStorageClient(file);
 
-            const res = await fetch("/api/ai/replicate", {
+            const resPostAiReplicate = await fetch("/api/ai/replicate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -114,24 +113,54 @@ export function ImageUploadPlaceholder() {
                 body: JSON.stringify({ imageUrl: publicUrl }),
             });
 
-            const restoredImageUrl = await res.json();
+            const endPointFinishUrl = await resPostAiReplicate.json();
+          
 
-            if (restoredImageUrl.error) {
-                throw new Error(restoredImageUrl.error);
-            }
-            const blob = await getBlobFromImageUrl(restoredImageUrl.data);
-            if (!blob) {
-                throw new Error("Arquivo Blob não foi montado");
+            if (endPointFinishUrl.error) {
+                throw new Error(endPointFinishUrl.error);
             }
 
-            // const path = getPathImage(user.id, "Restored", nameImage);
-            const path = getPathFileStorage({
-                userId: user.id,
-                pathImagem: "Restored",
-                imageName: nameImage,
-            });
+            while (true) {
+                console.log("Pooling imagem from replicate...");
+                await new Promise((resolve) => setTimeout(resolve, 10000)); // verifica a cada 10 segundos se a imagem já foi restaurada
 
-            await uploadFileStorageClient(path, blob);
+                const resGetAiReplicate = await fetch("/api/ai/replicate", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        urlEndPoint: endPointFinishUrl.data,
+                    }),
+                });
+
+                const restoredImageUrl = await resGetAiReplicate.json();
+
+                if (restoredImageUrl.error) {
+                    throw new Error(restoredImageUrl.error);
+                }
+
+                if (restoredImageUrl.data) {
+                    const blob = await getBlobFromImageUrl(
+                        restoredImageUrl.data
+                    );
+
+                    if (!blob) {
+                        throw new Error("Arquivo Blob não foi montado");
+                    }
+
+                    // const path = getPathImage(user.id, "Restored", nameImage);
+                    const path = getPathFileStorage({
+                        userId: user.id,
+                        pathImagem: "Restored",
+                        imageName: nameImage,
+                    });
+                 
+
+                    await uploadFileStorageClient(path, blob);
+                    break;
+                }
+            }
         } catch (error: any) {
             alert(`Erro ao restaurar ${error.message}`);
 

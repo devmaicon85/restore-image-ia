@@ -27,7 +27,7 @@ export default async function UserApp({ params }: Props) {
         await listAllStorageServer(
             getPathFileStorage({
                 userId: session.user.id,
-                pathImagem: "Processing",
+                pathImagem: "Restored",
             })
         );
 
@@ -40,11 +40,11 @@ export default async function UserApp({ params }: Props) {
         );
 
     if (errorProcessing) {
-        alert("erro ao listar imagens processadas");
+        console.error("erro ao listar imagens processadas");
     }
 
     if (errorRestored) {
-        alert("erro ao listar imagens restauradas");
+        console.error("erro ao listar imagens restauradas");
     }
     return (
             <AuthProvider>

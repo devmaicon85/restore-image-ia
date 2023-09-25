@@ -53,25 +53,36 @@ export async function POST(req: NextRequestWithImage) {
 
     const endPointFinishUrl = (await startRestoreResponse.json()).urls.get;
 
+    return NextResponse.json({ data: endPointFinishUrl }, { status: 200 })
 
-    while (true) {
-        console.log('Pooling imagem from replicate...')
-        await new Promise(resolve => setTimeout(resolve, 10000))
+}
 
-        const finishResponse = await fetch(endPointFinishUrl, { headers });
 
+export async function PUT(req: NextRequestWithImage) {
+
+
+    const { urlEndPoint } = await req.json()
+
+    try {
+        const finishResponse = await fetch(urlEndPoint, { headers, method: "GET" });
         const response = await finishResponse.json();
-        console.log("🚀 ~ file: route.ts:64 ~ POST ~ response:", response)
 
-        if (response.status === 'succeeded') {
-            const restoredImage = response.output;
-            return NextResponse.json({ data: restoredImage }, { status: 200 })
+        const status = response.status;
+
+        if (status === 'succeeded') {
+            const restoredImage: string = response.output;
+            const status = response.status;
+            return NextResponse.json({ data: restoredImage, status, error: null }, { status: 200 })
         }
 
-        if (response.status === 'failed') {
-            const error = response.error;
-            return NextResponse.json({ error }, { status: 401 })
-        }
+
+        return NextResponse.json({ data: null, status, error: response.error }, { status: 500 })
+
+
+
+    } catch (error: any) {
+        return NextResponse.json({ data: null, status: "error", error: error.message }, { status: 500 })
+
     }
 
-} 
+}
