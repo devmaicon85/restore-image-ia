@@ -82,6 +82,14 @@ export function ImageUploadPlaceholder() {
 
             const { data } = await uploadFileStorageClient(path, file);
 
+
+            toast({
+                title:"Sucesso",
+                description: "A imagem foi enviada com sucesso, iniciando restauração...",
+                variant: "default",
+            })
+
+
             restauredImage(data);
         } catch (error: any) {
             toast({
@@ -161,6 +169,13 @@ export function ImageUploadPlaceholder() {
                     });
 
                     await uploadFileStorageClient(path, blob);
+
+                    toast({
+                        title:"Sucesso",
+                        description: "A imagem foi restaurada com sucesso!",
+                        variant: "default",
+                    })
+        
                     break;
                 }
             }
