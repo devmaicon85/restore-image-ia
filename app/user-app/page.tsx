@@ -65,7 +65,7 @@ export default async function UserApp({ params }: Props) {
 
                             <div className="relative">
                                 <ImageUploadPlaceholder />
-                                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 m-10">
+                                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 my-10">
                                     {processingImages?.map((image) => (
                                         <div
                                             key={image.id}

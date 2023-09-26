@@ -17,7 +17,15 @@ import { deleteFilesStorageClient } from "@/lib/supabase/storage/deleteFilesStor
 import { getPathFileStorage } from "@/util/getPathFileStorage";
 import { toast } from "../ui/use-toast";
 import { Button } from "../ui/button";
-import { Trash } from "lucide-react";
+import { Download, ExternalLink, LucideLink2, Trash, Trash2 } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { DialogConfirm } from "../app/dialogConfirm";
+import { DialogTrigger } from "../ui/dialog";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     image: RestoredImage;
@@ -69,8 +77,8 @@ export function ListImages({
 
     return (
         <div className={cn("space-y-3", className)} {...props}>
-            <ContextMenu>
-                <ContextMenuTrigger>
+            <DropdownMenu>
+                <DropdownMenuTrigger>
                     <Image
                         src={url}
                         alt={image.name}
@@ -82,33 +90,52 @@ export function ListImages({
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j+/TsABc4C5lCWr+MAAAAASUVORK5CYII="
                     />
-                    
-                </ContextMenuTrigger>
-                <ContextMenuContent className="w-40">
-                    <ContextMenuItem
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40">
+                    <DropdownMenuItem
                         onClick={() => {
                             openImageUrl(url);
                         }}
                     >
-                        Abrir Imagem
-                    </ContextMenuItem>
-                    <ContextMenuItem
-                        onClick={() => {
-                            handleDeleteImage(image.name);
-                        }}
-                    >
-                        Excluir Imagem
-                    </ContextMenuItem>
+                        <Button
+                            variant={"ghost"}
+                            className="gap-2 p-2 w-full justify-start"
+                        >
+                            <ExternalLink size={18} /> Abrir
+                        </Button>
+                    </DropdownMenuItem>
 
-                    <ContextMenuItem
+                    <DropdownMenuItem
                         onClick={() => {
                             downloadImageUrl(url, image.name);
                         }}
                     >
-                        Download
-                    </ContextMenuItem>
-                </ContextMenuContent>
-            </ContextMenu>
+                        <Button
+                            variant={"ghost"}
+                            className="gap-2 p-2 w-full  justify-start"
+                        >
+                            <Download size={18} /> Download
+                        </Button>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                        <DialogConfirm
+                            confirmRed
+                            title="Excluir imagem?"
+                            description="Tem certeza que deseja excluir essa imagem? Essa ação não poderá ser desfeita."
+                            onConfirm={() => handleDeleteImage(image.name)}
+                        >
+                            <DialogTrigger asChild>
+                                <Button
+                                    className="gap-2 w-full hover:bg-destructive p-2 m-2 justify-start"
+                                >
+                                    <Trash2 size={18} /> Excluir
+                                </Button>
+                            </DialogTrigger>
+                        </DialogConfirm>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
     );
 }
