@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import { toast } from "../ui/use-toast";
 
 const formSchema = z.object({
     email: z.string().email("Informe um email válido"),
@@ -45,18 +46,28 @@ export function LoginAccountForm() {
 
             if (session) {
                 form.reset();
-                router.refresh()
+                router.refresh();
             }
 
-            if(error){
-                alert('credenciais inválidas')
-                
+            if (error) {
+                toast({
+                    title: "Credenciais inválidas",
+                    variant: "destructive",
+                    description:
+                        "O e-mail que você informou já está cadastrado. Faça Login",
+                });
             }
         } catch (error) {
             console.log(
                 "🚀 ~ file: create-account-form.tsx:46 ~ onSubmit ~ error:",
                 error
             );
+            toast({
+                title: "Erro",
+                variant: "destructive",
+                description:
+                    "Erro ao tentar efetuar o login. Consulte o log para mais informações",
+            });
         }
     }
 

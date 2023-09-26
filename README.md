@@ -26,11 +26,11 @@ pnpm i
 
 # Melhorias Realizadas
 
-A seguir estão as melhorias realizadas no projeto original:
+A seguir estão as melhorias que realizei no projeto:
 
-- Separação da aplicação e das imagens por usuário logado, tornando assim a aplicação multi tenancy.
+- Separação das imagens por usuário logado, tornando assim a aplicação multi tenancy.
 - Criação de uma pasta para cada usuário logado no Supabase, com políticas de permissão aplicadas apenas à pasta do usuário logado.
-- Polling imagem from replicate do lado do servidor não funcionava na vercel quando a resposta demorava mais de 10 segundos; O while agora ocorre do lado do cliente corrigindo esse problema.
+- Polling imagem from replicate do lado do servidor não funcionava na vercel quando a resposta era maior de 10 segundos; Agora ocorre do lado do cliente corrigindo esse problema com a vercel.
 
 
 ## Outras melhorias

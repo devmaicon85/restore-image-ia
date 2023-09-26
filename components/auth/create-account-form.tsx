@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import { toast } from "../ui/use-toast";
 
 const formSchema = z.object({
     name: z
@@ -56,10 +57,15 @@ export function CreateAccountForm() {
                 // },
             });
 
-            if(error?.status == 400){
-                alert('Usuário já cadastrado. Faça Login')
+            if (error?.status == 400) {
+                toast({
+                    title: "Usuário já cadastrado",
+                    variant: "destructive",
+                    description:
+                        "O e-mail que você informou já está cadastrado. Faça Login",
+                });
             }
-            
+
             if (user) {
                 form.reset();
                 router.refresh();
@@ -69,6 +75,12 @@ export function CreateAccountForm() {
                 "🚀 ~ file: create-account-form.tsx:46 ~ onSubmit ~ error:",
                 error
             );
+            toast({
+                title: "Erro",
+                variant: "destructive",
+                description:
+                    "Erro ao registrar usuário. Consulte o log para mais informações",
+            });
         }
     }
 

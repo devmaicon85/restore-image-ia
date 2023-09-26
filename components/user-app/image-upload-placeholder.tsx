@@ -37,10 +37,7 @@ export function ImageUploadPlaceholder() {
     const [importing, setImporting] = useState(false);
 
     async function onDrop(accessFiles: File[]) {
-        if (!user) {
-            alert("Nenhum usuário logado");
-            return;
-        }
+        if (!user) return;
 
         try {
             setImporting(true);
@@ -53,7 +50,6 @@ export function ImageUploadPlaceholder() {
                 pathImagem: "Processing",
                 imageName: nameImage,
             });
-            // const path = getPathImage(user.id, "Processing", nameImage);
 
             const { data } = await uploadFileStorageClient(path, file);
 
@@ -114,7 +110,6 @@ export function ImageUploadPlaceholder() {
             });
 
             const endPointFinishUrl = await resPostAiReplicate.json();
-          
 
             if (endPointFinishUrl.error) {
                 throw new Error(endPointFinishUrl.error);
@@ -155,7 +150,6 @@ export function ImageUploadPlaceholder() {
                         pathImagem: "Restored",
                         imageName: nameImage,
                     });
-                 
 
                     await uploadFileStorageClient(path, blob);
                     break;

@@ -52,7 +52,7 @@ export function ListImages({
                 imageName: image,
             });
 
-            deleteFilesStorageClient([imageRestored, imageProcessing]);
+            await deleteFilesStorageClient([imageRestored, imageProcessing]);
 
             router.refresh();
         } catch (error: any) {
@@ -72,6 +72,8 @@ export function ListImages({
                         className={cn(
                             " rounded-lg transition-all hover:scale-105"
                         )}
+                        placeholder="blur"
+                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j+/TsABc4C5lCWr+MAAAAASUVORK5CYII="
                     />
                 </ContextMenuTrigger>
                 <ContextMenuContent className="w-40">
