@@ -69,7 +69,7 @@ export default async function UserApp({ params }: Props) {
                                     {processingImages?.map((image) => (
                                         <div
                                             key={image.id}
-                                            className="grid grid-cols-2 items-center gap-4 bg-gray-100 rounded-lg p-4"
+                                            className="grid grid-cols-2 items-center gap-4  bg-opacity-90 border rounded-lg p-2"
                                         >
                                             <ListImages
                                                 key={image.id}
