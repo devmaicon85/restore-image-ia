@@ -16,8 +16,8 @@ import { openImageUrl } from "@/util/openImage";
 import { deleteFilesStorageClient } from "@/lib/supabase/storage/deleteFilesStoreClient";
 import { getPathFileStorage } from "@/util/getPathFileStorage";
 import { toast } from "../ui/use-toast";
-import { Button } from "../ui/button";
-import { Download, ExternalLink, LucideLink2, Trash, Trash2 } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
+import { ChevronDown, Download, ExternalLink, LucideLink2, Menu, MoreHorizontal, Option, OptionIcon, Trash, Trash2 } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -77,9 +77,7 @@ export function ListImages({
 
     return (
         <div className={cn("space-y-3", className)} {...props}>
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    <Image
+            <Image
                         src={url}
                         alt={image.name}
                         width={width}
@@ -90,6 +88,9 @@ export function ListImages({
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j+/TsABc4C5lCWr+MAAAAASUVORK5CYII="
                     />
+            <DropdownMenu>
+                <DropdownMenuTrigger title="opções">
+                    <span className={buttonVariants({variant: "link"})}><Menu size={16}/></span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-40">
                     <DropdownMenuItem
