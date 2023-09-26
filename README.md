@@ -7,7 +7,7 @@ O vídeo completo do projeto pode ser encontrado [aqui](https://www.youtube.com/
 
 
 
-![Tela da aplicação](https://raw.githubusercontent.com/devmaicon85/restore-image-ia/main/public/image-app.png)
+![Tela da aplicação](https://raw.githubusercontent.com/devmaicon85/restore-image-ia/main/public/app-image.png)
 
 
 ## Instalação

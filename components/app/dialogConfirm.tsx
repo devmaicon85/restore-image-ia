@@ -33,7 +33,7 @@ export function DialogConfirm({
         <Dialog defaultOpen={false} open={open} onOpenChange={setOpen} >
             {children}
             <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader className="gap-2">
+                <DialogHeader className="gap-2"     >
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
