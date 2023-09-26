@@ -6,9 +6,9 @@ import { ToggleTheme } from "../app/toggle-theme";
 
 export default function UserAppHeader() {
     return (
-        <header className="my-4 mx-4">
+        <header className=" p-4 border-b">
             <nav className="flex justify-between items-center">
-                <Logo />
+                <div className=" mx-8 md:mx-0 transition-all duration-500"><Logo /></div>
                 <div className="gap-2 flex">
                     <ToggleTheme />
                     <UserNav />

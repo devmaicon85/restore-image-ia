@@ -18,6 +18,7 @@ import { uploadFileStorageClient } from "@/lib/supabase/storage/uploadFileStorag
 import { getFileStorageClient } from "@/lib/supabase/storage/getFileStorageClient";
 import { deleteFilesStorageClient } from "@/lib/supabase/storage/deleteFilesStoreClient";
 import { getPathFileStorage } from "@/util/getPathFileStorage";
+import { toast } from "../ui/use-toast";
 
 export interface FilePreview {
     file: Blob;
@@ -36,32 +37,7 @@ export function ImageUploadPlaceholder() {
     const [restoring, setRestoring] = useState(false);
     const [importing, setImporting] = useState(false);
 
-    async function onDrop(accessFiles: File[]) {
-        if (!user) return;
-
-        try {
-            setImporting(true);
-            const file = accessFiles[0];
-            const preview = URL.createObjectURL(file);
-            setFile({ file, preview });
-
-            const path = getPathFileStorage({
-                userId: user.id,
-                pathImagem: "Processing",
-                imageName: nameImage,
-            });
-
-            const { data } = await uploadFileStorageClient(path, file);
-
-            restauredImage(data);
-        } catch (error: any) {
-            alert(`Erro ao restaurar ${error.message}:${error.name}`);
-            // reset();
-        } finally {
-            setImporting(false);
-        }
-    }
-
+    
     const { getInputProps, getRootProps, isDragActive } = useDropzone({
         onDrop: onDrop,
         maxFiles: 1,
@@ -87,6 +63,38 @@ export function ImageUploadPlaceholder() {
         setNameImage(`${uuid()}.png`);
         router.refresh();
     }
+
+    
+    async function onDrop(accessFiles: File[]) {
+        if (!user) return;
+
+        try {
+            setImporting(true);
+            const file = accessFiles[0];
+            const preview = URL.createObjectURL(file);
+            setFile({ file, preview });
+
+            const path = getPathFileStorage({
+                userId: user.id,
+                pathImagem: "Processing",
+                imageName: nameImage,
+            });
+
+            const { data } = await uploadFileStorageClient(path, file);
+
+            restauredImage(data);
+        } catch (error: any) {
+            toast({
+                title:"Erro ao enviar imagem",
+                description: error.message,
+                variant: "destructive",
+            })
+            // reset();
+        } finally {
+            setImporting(false);
+        }
+    }
+
     async function restauredImage(file: FileToProcess) {
         if (!user) {
             throw new Error("Nenhum usuário logado");
@@ -117,7 +125,8 @@ export function ImageUploadPlaceholder() {
 
             while (true) {
                 console.log("Pooling imagem from replicate...");
-                await new Promise((resolve) => setTimeout(resolve, 10000)); // verifica a cada 10 segundos se a imagem já foi restaurada
+                await new Promise((resolve) => setTimeout(resolve, 10000)); 
+                // verifica a cada 10 segundos se a imagem já foi restaurada
 
                 const resGetAiReplicate = await fetch("/api/ai/replicate", {
                     method: "PUT",
@@ -156,7 +165,12 @@ export function ImageUploadPlaceholder() {
                 }
             }
         } catch (error: any) {
-            alert(`Erro ao restaurar ${error.message}`);
+
+            toast({
+                title:"Erro ao restaurar imagem",
+                description: error.message,
+                variant: "destructive",
+            })
 
             // exclui a imagem original caso a restauração falhe.
             // const path = getPathImage(user.id, "Processing", nameImage);

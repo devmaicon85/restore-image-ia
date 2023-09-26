@@ -1,7 +1,7 @@
+import { PathImage } from "@/types";
 import { FOLDER_PROCESSING, FOLDER_RESTORED, STORAGE_URL, SUPABASE_BUCKET, SUPABASE_URL } from "./constants";
 
 
-type PathImage = "Processing" | "Restored"
 
 type PathImageProps = {
     userId: string,

@@ -29,14 +29,15 @@ pnpm i
 A seguir estão as melhorias que realizei no projeto:
 
 - Separação das imagens por usuário logado, tornando assim a aplicação multi tenancy.
-- Criação de uma pasta para cada usuário logado no Supabase, com políticas de permissão aplicadas apenas à pasta do usuário logado.
-- Polling imagem from replicate do lado do servidor não funcionava na vercel quando a resposta era maior de 10 segundos; Agora ocorre do lado do cliente corrigindo esse problema com a vercel.
+- Criação de uma pasta para cada usuário no Supabase, com políticas de permissão apenas à pasta do usuário logado.
+- Polling imagem from replicate alterado para o lado do cliente. Aguardar a imagem restaurada ficar pronta pelo lado do servidor não funcionava na vercel quando a resposta demorava mais de 10 segundos; Agora ocorre do lado do cliente corrigindo esse problema
 
 
-## Outras melhorias
-- Nova listagem das imagens originais enviadas pelo usuário.
+## Outras funcionalidades incluidas
+- Lista imagens originais e restauradas lado a lado
 - Nova opção de abrir imagem com o botão direito.
 - Nova opção de excluir imagem com o botão direito.
+- Adicionado toast do shadcn/ui
 
 
 ## Funções Modificadas e Separadas na Pasta Utils
@@ -44,7 +45,7 @@ A seguir estão as melhorias que realizei no projeto:
 - `downloadImage.ts`
 - `openImage.ts`
 - `getBlobFromImage.ts` - busca o *blob* de uma imagem sem usar o Supabase.
-- `getPathFileStorage.ts` - busca o diretório no *storage*.
+- `getPathFileStorage.ts` - busca o diretório no *storage* em uma única função em todo o sistema
 - `constants.ts` - simplifica o uso das variáveis de ambiente.
 
 ## Funções do Supabase Separadas em arquivos
@@ -68,6 +69,12 @@ Criado um provider `AuthProvider` para persistir o acesso ao código do usuário
 
 Foi adicionado suporte para os temas Dark, Light e System.
 
+
+## Responsavidade
+
+Aplicado responsavidade do menu principal do app com toggle para abrir ou fechar o menu
+
 ## Logo Diferente
 
-Foi adicionada uma logo personalizada à aplicação.
+Foi adicionada uma logo personalizada à aplicação em componente separado
+

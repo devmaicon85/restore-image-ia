@@ -16,3 +16,6 @@ export interface FileToProcess {
     path: string;
 }
 
+
+export type PathImage = "Processing" | "Restored"
+

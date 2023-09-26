@@ -15,6 +15,9 @@ import { downloadImageUrl } from "@/util/downloadImage";
 import { openImageUrl } from "@/util/openImage";
 import { deleteFilesStorageClient } from "@/lib/supabase/storage/deleteFilesStoreClient";
 import { getPathFileStorage } from "@/util/getPathFileStorage";
+import { toast } from "../ui/use-toast";
+import { Button } from "../ui/button";
+import { Trash } from "lucide-react";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     image: RestoredImage;
@@ -56,7 +59,11 @@ export function ListImages({
 
             router.refresh();
         } catch (error: any) {
-            alert(`Erro ao deletar imagem: ${error.message}`);
+            toast({
+                title: "Erro ao deletar imagem",
+                description: error.message,
+                variant: "destructive",
+            });
         }
     }
 
@@ -75,6 +82,7 @@ export function ListImages({
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j+/TsABc4C5lCWr+MAAAAASUVORK5CYII="
                     />
+                    
                 </ContextMenuTrigger>
                 <ContextMenuContent className="w-40">
                     <ContextMenuItem
