@@ -2,7 +2,7 @@
 const nextConfig = {
     swcMinify: true,
     images: {
-        remotePatterns: [{ hostname: "qekizunytsypfkklwzte.supabase.co" }],
+        remotePatterns: [{ hostname: "*.supabase.co" }],
     },
     experimental: {
         serverActions: true,
