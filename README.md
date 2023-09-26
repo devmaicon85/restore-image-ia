@@ -40,9 +40,9 @@ A seguir estão as melhorias que realizei no projeto:
 
 ## Outras funcionalidades incluidas
 - Lista imagens originais e restauradas lado a lado
-- Nova opção de abrir imagem com o botão direito.
-- Nova opção de excluir imagem com o botão direito.
-- Adicionado toast do shadcn/ui
+- Nova opção de abrir imagem.
+- Nova opção de excluir imagem.
+- Adicionado toast do shadcn/ui para as mensagens de alerta.
 
 
 ## Funções Modificadas e Separadas na Pasta Utils
@@ -77,9 +77,5 @@ Foi adicionado suporte para os temas Dark, Light e System.
 
 ## Responsavidade
 
-Aplicado responsavidade do menu principal do app com toggle para abrir ou fechar o menu
-
-## Logo Diferente
-
-Foi adicionada uma logo personalizada à aplicação em componente separado
+Aplicado responsavidade do menu principal do app com toggle para abrir ou fechar o mene;
 
