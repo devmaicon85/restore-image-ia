@@ -5,6 +5,11 @@ O objetivo deste projeto é criar uma aplicação para a restauração de fotos 
 
 O vídeo completo do projeto pode ser encontrado [aqui](https://www.youtube.com/watch?v=KHKpKR1NuaU&t=2s&ab_channel=DeveloperDeck101).
 
+
+
+![Tela da aplicação]([url_da_imagem](https://raw.githubusercontent.com/devmaicon85/restore-image-ia/main/image-app.png))
+
+
 ## Instalação
 
 Siga as instruções abaixo para instalar todas as dependências necessárias:
